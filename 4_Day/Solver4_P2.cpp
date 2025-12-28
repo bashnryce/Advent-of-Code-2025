@@ -2,22 +2,12 @@
 
 given a grid of @ and . chars find all the @ chars that have less than 4 @ surrounding them
 total the amount of @'s that meet the criteria
+Part2: now remove all of the @ symbols and continue until no more can be removed
 
-Example:  (x's are @ chars that meet the criteria) 
-..xx.xx@x.
-x@@.@.@.@@
-@@@@@.x.@@
-@.@@@@..@.
-x@.@@@@.@x
-.@@@@@@@.@
-.@.@.@.@@@
-x.@@@.@@@@
-.@@@@@@@@.
-x.x.@@@.x.
-Total: 13
-
-Get array from file and load into array of strings (aka 2d array of chars)
-run over the array and save it as 1 for @ and 0 for . in a new array
+modifications:
+	- flag to track how many @ have been found in one iteration over the whole grid
+		- this will be used as a flag for a while loop 
+	- when < 4 condition is met change that 1 to a 0
 
 */
 
@@ -104,32 +94,41 @@ int main() {
 	//working loop to find all spots that match the condition
 	int surrounding = 0;
 	int total = 0;
+	int removedCount = 1; //inital value != 0 so we get at least one interation
 	
-	for(int j = 1; j < rowSize-1; j++) {
-		for(int k = 1; k < colSize-1; k++) {
-			
-			//for each char in grid
-			
-			if(grid[j][k] == 1) { //if we are at an @ char
+	while(removedCount != 0) {
+	
+		removedCount = 0; //clear the value after each interation over the grid
+		
+		for(int j = 1; j < rowSize-1; j++) {
+			for(int k = 1; k < colSize-1; k++) {
 				
-				//loop over each char surrounding the current one and add them together in surrounding
-				for(int x = -1; x <= 1; x++) { 
-					for(int y = -1; y <= 1; y++) {
+				//for each char in grid
+				
+				if(grid[j][k] == 1) { //if we are at an @ char
 					
-							surrounding += grid[j+x][k+y];		
+					//loop over each char surrounding the current one and add them together in surrounding
+					for(int x = -1; x <= 1; x++) { 
+						for(int y = -1; y <= 1; y++) {
+						
+								surrounding += grid[j+x][k+y];		
 
+						}
 					}
-				}
-				surrounding--;		// -1 to exclude the current position (we only want the surrounding)
-				if(surrounding < 4) {
-					total++;
+					surrounding--;		// -1 to exclude the current position (we only want the surrounding)
+					if(surrounding < 4) {
+						total++;
+						grid[j][k] = 0; //remove the item (@)
+						removedCount++;
+					}
+					
 				}
 				
-			}
-			
-			surrounding = 0; //reset value after each element
-			
-		}		
+				surrounding = 0; //reset value after each element
+				
+			}		
+		}
+		
 	}
 	
 	cout << "Total: " << total << endl << endl;
